@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/mochimono-check/sw.js', { scope: '/mochimono-check/' })})}
