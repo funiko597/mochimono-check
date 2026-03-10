@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nursery: #FF8B94;
+  --color-nursery-light: #FFF0F1;
+  --color-nursery-dark: #E57A82;
+  --color-kindergarten: #7EC8E3;
+  --color-kindergarten-light: #EBF6FB;
+  --color-kindergarten-dark: #5DB0CC;
+  --color-bg: #FFF5F5;
+  --font-family-zen: 'Zen Maru Gothic', serif;
+}
+
+body {
+  font-family: var(--font-family-zen);
+  background-color: var(--color-bg);
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes confetti-pop {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-confetti {
+  animation: confetti-pop 0.5s ease-out;
+}
+
+@keyframes check-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-check-bounce {
+  animation: check-bounce 0.25s ease-in-out;
+}
