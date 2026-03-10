@@ -3,6 +3,7 @@ import type { ChildType, Weather } from './types/index.ts'
 import { nurseryItems, kindergartenItems } from './data/items.ts'
 import { getDayOfWeek } from './utils/storage.ts'
 import { useAppData } from './hooks/useAppData.ts'
+import { useWeatherForecast } from './hooks/useWeatherForecast.ts'
 import { TabSwitcher } from './components/TabSwitcher.tsx'
 import { WeatherSelector } from './components/WeatherSelector.tsx'
 import { ProgressBar } from './components/ProgressBar.tsx'
@@ -11,6 +12,7 @@ import { CompletionCelebration } from './components/CompletionCelebration.tsx'
 import { EventManager } from './components/EventManager.tsx'
 import { CustomItemManager } from './components/CustomItemManager.tsx'
 import { WeatherForecastCard } from './components/WeatherForecastCard.tsx'
+import { AiAssistantCard } from './components/AiAssistantCard.tsx'
 
 const COLORS = {
   nursery: '#FF8B94',
@@ -33,6 +35,8 @@ function App() {
     removeEvent,
     getTodayEvents,
   } = useAppData()
+
+  const { forecast, status: weatherStatus, error: weatherError, retry: weatherRetry } = useWeatherForecast()
 
   const accentColor = COLORS[activeChild]
   const checks = getChecks(activeChild)
@@ -110,7 +114,21 @@ function App() {
         <TabSwitcher active={activeChild} onChange={setActiveChild} />
 
         {/* 天気予報・服装アドバイス */}
-        <WeatherForecastCard accentColor={accentColor} />
+        <WeatherForecastCard
+          forecast={forecast}
+          status={weatherStatus}
+          error={weatherError}
+          retry={weatherRetry}
+          accentColor={accentColor}
+        />
+
+        {/* AIお支度アシスタント */}
+        <AiAssistantCard
+          forecast={forecast}
+          childType={activeChild}
+          todayEvents={todayEvents}
+          accentColor={accentColor}
+        />
 
         {/* 天気選択 */}
         <WeatherSelector selected={weather} onChange={setWeather} accentColor={accentColor} />

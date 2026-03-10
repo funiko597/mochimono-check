@@ -1,12 +1,15 @@
-import { useWeatherForecast, getWeatherInfo, getClothingAdvice } from '../hooks/useWeatherForecast'
+import type { WeatherForecast } from '../hooks/useWeatherForecast'
+import { getWeatherInfo, getClothingAdvice } from '../hooks/useWeatherForecast'
 
 interface Props {
+  forecast: WeatherForecast | null
+  status: 'idle' | 'loading' | 'success' | 'error'
+  error: string
+  retry: () => void
   accentColor: string
 }
 
-export function WeatherForecastCard({ accentColor }: Props) {
-  const { forecast, status, error, retry } = useWeatherForecast()
-
+export function WeatherForecastCard({ forecast, status, error, retry, accentColor }: Props) {
   if (status === 'idle' || status === 'loading') {
     return (
       <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
