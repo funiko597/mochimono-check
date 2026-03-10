@@ -10,6 +10,7 @@ import { CheckList } from './components/CheckList.tsx'
 import { CompletionCelebration } from './components/CompletionCelebration.tsx'
 import { EventManager } from './components/EventManager.tsx'
 import { CustomItemManager } from './components/CustomItemManager.tsx'
+import { WeatherForecastCard } from './components/WeatherForecastCard.tsx'
 
 const COLORS = {
   nursery: '#FF8B94',
@@ -107,6 +108,9 @@ function App() {
 
         {/* タブ切り替え */}
         <TabSwitcher active={activeChild} onChange={setActiveChild} />
+
+        {/* 天気予報・服装アドバイス */}
+        <WeatherForecastCard accentColor={accentColor} />
 
         {/* 天気選択 */}
         <WeatherSelector selected={weather} onChange={setWeather} accentColor={accentColor} />
