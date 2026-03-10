@@ -20,7 +20,6 @@ export function ProfileManager({
   onUpdate,
   onRemove,
   onSelect,
-  accentColor,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
@@ -81,173 +80,170 @@ export function ProfileManager({
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+    <div className="card p-4 mb-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between w-full"
       >
-        <p className="text-sm text-gray-500 font-medium">
-          👤 おこさまプロフィール
+        <p className="section-label">
+          profile
           {profiles.length > 0 && (
-            <span className="text-xs text-gray-400 ml-1">（{profiles.length}人登録）</span>
+            <span className="text-[#d4cdc6] ml-1 font-number">({profiles.length})</span>
           )}
         </p>
-        <span className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+        <span className={`text-[#d4cdc6] text-xs transition-transform ${isOpen ? 'rotate-180' : ''}`}>
           ▼
         </span>
       </button>
 
       {isOpen && (
         <div className="mt-3">
-          {/* プロフィール一覧 */}
           {profiles.length > 0 && (
             <div className="space-y-2 mb-3">
               {profiles.map(profile => (
                 <div
                   key={profile.id}
-                  className={`rounded-xl p-3 border-2 transition-all ${
+                  className={`rounded-xl p-3 transition-all cursor-pointer ${
                     profile.id === activeProfileId
-                      ? 'border-current shadow-sm'
-                      : 'border-gray-100'
+                      ? 'bg-[#7c6d8e] text-white'
+                      : 'bg-[#faf8f5] border border-[#ebe7e3]'
                   }`}
-                  style={profile.id === activeProfileId ? { borderColor: accentColor } : undefined}
+                  onClick={() => onSelect(profile.id)}
                 >
                   <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => onSelect(profile.id)}
-                      className="flex items-center gap-2 flex-1 text-left"
-                    >
-                      <span className="text-2xl">
-                        {profile.type === 'nursery' ? '🐣' : '🌟'}
-                      </span>
-                      <div>
-                        <p className="text-sm font-bold text-gray-700">
-                          {profile.name}
-                          <span className="text-xs font-normal text-gray-400 ml-1">
-                            {profile.age}歳
-                          </span>
+                    <div>
+                      <p className={`text-sm font-medium ${
+                        profile.id === activeProfileId ? 'text-white' : 'text-[#3d3a38]'
+                      }`}>
+                        {profile.name}
+                        <span className={`text-xs font-normal ml-1.5 font-number ${
+                          profile.id === activeProfileId ? 'text-white/60' : 'text-[#8a8583]'
+                        }`}>
+                          {profile.age}歳 · {profile.type === 'nursery' ? '保育園' : '幼稚園'}
+                          {profile.gardenName && ` · ${profile.gardenName}`}
+                        </span>
+                      </p>
+                      {profile.allergies.length > 0 && (
+                        <p className={`text-xs mt-0.5 ${
+                          profile.id === activeProfileId ? 'text-rose-200' : 'text-rose-400'
+                        }`}>
+                          アレルギー: {profile.allergies.join(', ')}
                         </p>
-                        <p className="text-xs text-gray-400">
-                          {profile.type === 'nursery' ? '保育園' : '幼稚園'}
-                          {profile.gardenName && `・${profile.gardenName}`}
-                        </p>
-                        {profile.allergies.length > 0 && (
-                          <p className="text-xs text-red-400 mt-0.5">
-                            ⚠️ {profile.allergies.join(', ')}
-                          </p>
-                        )}
-                      </div>
-                    </button>
-                    <div className="flex gap-1">
+                      )}
+                    </div>
+                    <div className="flex gap-1" onClick={e => e.stopPropagation()}>
                       <button
                         onClick={() => startEdit(profile)}
-                        className="text-xs text-gray-400 px-2 py-1 rounded-lg hover:bg-gray-100"
+                        className={`text-[10px] px-2 py-1 rounded ${
+                          profile.id === activeProfileId
+                            ? 'text-white/60 hover:text-white/80'
+                            : 'text-[#8a8583] hover:text-[#3d3a38]'
+                        }`}
                       >
                         編集
                       </button>
                       <button
                         onClick={() => onRemove(profile.id)}
-                        className="text-xs text-red-400 px-2 py-1 rounded-lg hover:bg-red-50"
+                        className={`text-[10px] px-2 py-1 rounded ${
+                          profile.id === activeProfileId
+                            ? 'text-rose-200 hover:text-rose-100'
+                            : 'text-rose-400 hover:text-rose-500'
+                        }`}
                       >
                         削除
                       </button>
                     </div>
                   </div>
-                  {profile.notes && (
-                    <p className="text-xs text-gray-400 mt-1 pl-9">📝 {profile.notes}</p>
-                  )}
                 </div>
               ))}
             </div>
           )}
 
-          {/* 追加・編集フォーム */}
           {isAdding ? (
-            <div className="space-y-3 rounded-xl bg-gray-50 p-3">
-              <p className="text-xs font-bold text-gray-500">
-                {editingId ? '✏️ プロフィール編集' : '➕ 新しいおこさま'}
+            <div className="space-y-3 rounded-xl bg-[#faf8f5] p-3 border border-[#ebe7e3]">
+              <p className="text-xs font-medium text-[#8a8583]">
+                {editingId ? '編集' : '新規登録'}
               </p>
 
               <div>
-                <label className="text-xs text-gray-400">お名前</label>
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">名前</label>
                 <input
                   type="text"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="たろう"
-                  className="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-current"
-                  style={{ focusBorderColor: accentColor } as React.CSSProperties}
+                  className="w-full mt-1 px-3 py-2 rounded-lg border border-[#ebe7e3] text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
                 />
               </div>
 
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <label className="text-xs text-gray-400">年齢</label>
-                  <div className="flex gap-1 mt-1 flex-wrap">
-                    {AGE_OPTIONS.map(a => (
-                      <button
-                        key={a}
-                        onClick={() => setAge(a)}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                          age === a ? 'text-white' : 'bg-white text-gray-600 border border-gray-200'
-                        }`}
-                        style={age === a ? { backgroundColor: accentColor } : undefined}
-                      >
-                        {a}歳
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               <div>
-                <label className="text-xs text-gray-400">園の種類</label>
-                <div className="flex gap-2 mt-1">
-                  {(['nursery', 'kindergarten'] as ChildType[]).map(t => (
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">年齢</label>
+                <div className="flex gap-1 mt-1">
+                  {AGE_OPTIONS.map(a => (
                     <button
-                      key={t}
-                      onClick={() => setType(t)}
-                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                        type === t ? 'text-white' : 'bg-white text-gray-600 border border-gray-200'
+                      key={a}
+                      onClick={() => setAge(a)}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-medium font-number transition-colors ${
+                        age === a
+                          ? 'bg-[#7c6d8e] text-white'
+                          : 'bg-white/80 text-[#8a8583] border border-[#ebe7e3]'
                       }`}
-                      style={type === t ? { backgroundColor: accentColor } : undefined}
                     >
-                      {t === 'nursery' ? '🐣 保育園' : '🌟 幼稚園'}
+                      {a}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-gray-400">園の名前（任意）</label>
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">種類</label>
+                <div className="flex gap-2 mt-1">
+                  {(['nursery', 'kindergarten'] as ChildType[]).map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setType(t)}
+                      className={`flex-1 py-2 rounded-lg text-xs font-medium transition-colors ${
+                        type === t
+                          ? 'bg-[#7c6d8e] text-white'
+                          : 'bg-white/80 text-[#8a8583] border border-[#ebe7e3]'
+                      }`}
+                    >
+                      {t === 'nursery' ? '保育園' : '幼稚園'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">園の名前</label>
                 <input
                   type="text"
                   value={gardenName}
                   onChange={e => setGardenName(e.target.value)}
-                  placeholder="○○保育園"
-                  className="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none"
+                  placeholder="任意"
+                  className="w-full mt-1 px-3 py-2 rounded-lg border border-[#ebe7e3] text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-gray-400">アレルギー（カンマ区切り・任意）</label>
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">アレルギー（カンマ区切り）</label>
                 <input
                   type="text"
                   value={allergies}
                   onChange={e => setAllergies(e.target.value)}
-                  placeholder="卵, 乳"
-                  className="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none"
+                  placeholder="任意"
+                  className="w-full mt-1 px-3 py-2 rounded-lg border border-[#ebe7e3] text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-gray-400">メモ（任意）</label>
+                <label className="text-[10px] text-[#8a8583] uppercase tracking-wider">メモ</label>
                 <input
                   type="text"
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
-                  placeholder="好きなキャラクター、注意点など"
-                  className="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none"
+                  placeholder="任意"
+                  className="w-full mt-1 px-3 py-2 rounded-lg border border-[#ebe7e3] text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
                 />
               </div>
 
@@ -255,14 +251,13 @@ export function ProfileManager({
                 <button
                   onClick={editingId ? handleUpdate : handleAdd}
                   disabled={!name.trim()}
-                  className="flex-1 py-2 rounded-xl text-sm text-white font-medium disabled:opacity-40"
-                  style={{ backgroundColor: accentColor }}
+                  className="flex-1 py-2 rounded-lg text-xs text-white font-medium bg-[#7c6d8e] disabled:opacity-30"
                 >
                   {editingId ? '更新' : '登録'}
                 </button>
                 <button
                   onClick={resetForm}
-                  className="px-4 py-2 rounded-xl text-sm text-gray-500 bg-white border border-gray-200"
+                  className="px-4 py-2 rounded-lg text-xs text-[#8a8583] bg-white/80 border border-[#ebe7e3]"
                 >
                   キャンセル
                 </button>
@@ -271,9 +266,9 @@ export function ProfileManager({
           ) : (
             <button
               onClick={() => setIsAdding(true)}
-              className="w-full py-2 rounded-xl text-sm border-2 border-dashed border-gray-200 text-gray-400 hover:border-gray-300"
+              className="w-full py-2 rounded-lg text-xs border border-dashed border-[#d4cdc6] text-[#8a8583] hover:border-[#7c6d8e] hover:text-[#7c6d8e] transition-colors"
             >
-              ＋ おこさまを追加
+              + 追加
             </button>
           )}
         </div>

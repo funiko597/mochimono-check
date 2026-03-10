@@ -1,39 +1,71 @@
 @import "tailwindcss";
 
 @theme {
-  --color-nursery: #FF8B94;
-  --color-nursery-light: #FFF0F1;
-  --color-nursery-dark: #E57A82;
-  --color-kindergarten: #7EC8E3;
-  --color-kindergarten-light: #EBF6FB;
-  --color-kindergarten-dark: #5DB0CC;
-  --color-bg: #FFF5F5;
-  --font-family-zen: 'Zen Maru Gothic', serif;
+  --color-bg: #faf8f5;
+  --color-lavender: #e8dff5;
+  --color-lavender-soft: #f5f0ff;
+  --color-sage: #c5d4c0;
+  --color-sage-soft: #eef2ed;
+  --color-blush: #f2e4e1;
+  --color-text: #3d3a38;
+  --color-text-soft: #8a8583;
+  --color-border: #ebe7e3;
+  --font-family-serif: 'Noto Serif JP', 'Georgia', serif;
+  --font-family-display: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --font-family-number: 'Inter', system-ui, sans-serif;
 }
 
 body {
-  font-family: var(--font-family-zen);
-  background-color: var(--color-bg);
+  font-family: var(--font-family-serif);
+  background: linear-gradient(170deg, #faf8f5 0%, #f5f0ff 40%, #f0f4f8 70%, #faf8f5 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  color: var(--color-text);
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.03em;
+}
+
+.font-display {
+  font-family: var(--font-family-display);
+}
+
+.font-number {
+  font-family: var(--font-family-number);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(235, 231, 227, 0.5);
+  border-radius: 16px;
+}
+
+.section-label {
+  font-family: var(--font-family-display);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
 }
 
 @keyframes confetti-pop {
   0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.2); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 .animate-confetti {
-  animation: confetti-pop 0.5s ease-out;
+  animation: confetti-pop 0.6s ease-out;
 }
 
 @keyframes check-bounce {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.06); }
 }
 
 .animate-check-bounce {
-  animation: check-bounce 0.25s ease-in-out;
+  animation: check-bounce 0.2s ease-in-out;
 }

@@ -8,7 +8,7 @@ interface Props {
   accentColor: string
 }
 
-export function EventManager({ events, onAdd, onRemove, accentColor }: Props) {
+export function EventManager({ events, onAdd, onRemove }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [date, setDate] = useState('')
   const [name, setName] = useState('')
@@ -27,13 +27,15 @@ export function EventManager({ events, onAdd, onRemove, accentColor }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+    <div className="card p-4 mb-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between"
       >
-        <span className="text-sm text-gray-500 font-medium">📅 イベント管理</span>
-        <span className="text-gray-400">{isOpen ? '▲' : '▼'}</span>
+        <p className="section-label">events</p>
+        <span className={`text-[#d4cdc6] text-xs transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+          ▼
+        </span>
       </button>
 
       {isOpen && (
@@ -41,20 +43,20 @@ export function EventManager({ events, onAdd, onRemove, accentColor }: Props) {
           {events.length > 0 && (
             <div className="space-y-2">
               {events.map(event => (
-                <div key={event.id} className="flex items-start gap-2 p-2 bg-gray-50 rounded-xl">
+                <div key={event.id} className="flex items-start gap-2 p-2.5 bg-[#faf8f5] rounded-xl border border-[#ebe7e3]">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-700">
-                      {event.date} - {event.name}
+                    <p className="text-sm text-[#3d3a38]">
+                      <span className="font-number">{event.date}</span> - {event.name}
                     </p>
                     {event.items.length > 0 && (
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-[#8a8583] truncate mt-0.5">
                         {event.items.join('、')}
                       </p>
                     )}
                   </div>
                   <button
                     onClick={() => onRemove(event.id)}
-                    className="text-gray-400 hover:text-red-400 text-sm px-1"
+                    className="text-[#d4cdc6] hover:text-rose-400 text-sm px-1 transition-colors"
                   >
                     ✕
                   </button>
@@ -63,32 +65,31 @@ export function EventManager({ events, onAdd, onRemove, accentColor }: Props) {
             </div>
           )}
 
-          <div className="border-t pt-3 space-y-2">
+          <div className="border-t border-[#ebe7e3] pt-3 space-y-2">
             <input
               type="date"
               value={date}
               onChange={e => setDate(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm"
+              className="w-full border border-[#ebe7e3] rounded-lg px-3 py-2 text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e] font-number"
             />
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="イベント名"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm"
+              className="w-full border border-[#ebe7e3] rounded-lg px-3 py-2 text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
             />
             <input
               type="text"
               value={itemsText}
               onChange={e => setItemsText(e.target.value)}
               placeholder="持ち物（カンマ区切り）"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm"
+              className="w-full border border-[#ebe7e3] rounded-lg px-3 py-2 text-sm bg-white/80 focus:outline-none focus:border-[#7c6d8e]"
             />
             <button
               onClick={handleAdd}
               disabled={!date || !name}
-              className="w-full py-2 rounded-xl text-white text-sm font-medium disabled:opacity-40"
-              style={{ backgroundColor: accentColor }}
+              className="w-full py-2 rounded-lg text-white text-sm font-medium disabled:opacity-30 bg-[#7c6d8e]"
             >
               追加する
             </button>
