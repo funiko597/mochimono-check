@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import type { WeatherForecast } from '../hooks/useWeatherForecast'
-import type { ChildType, EventItem } from '../types/index.ts'
+import type { ChildType, ChildProfile, EventItem } from '../types/index.ts'
 import { generateSuggestions, type AiSuggestion } from '../utils/aiAssistant'
 
 interface Props {
   forecast: WeatherForecast | null
   childType: ChildType
   todayEvents: EventItem[]
+  profile: ChildProfile | null
   accentColor: string
 }
 
@@ -27,10 +28,10 @@ function SuggestionItem({ suggestion }: { suggestion: AiSuggestion }) {
   )
 }
 
-export function AiAssistantCard({ forecast, childType, todayEvents, accentColor }: Props) {
+export function AiAssistantCard({ forecast, childType, todayEvents, profile, accentColor }: Props) {
   const suggestions = useMemo(
-    () => generateSuggestions(forecast, childType, todayEvents),
-    [forecast, childType, todayEvents]
+    () => generateSuggestions(forecast, childType, todayEvents, profile),
+    [forecast, childType, todayEvents, profile]
   )
 
   if (suggestions.length === 0) {

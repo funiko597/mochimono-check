@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import type { ChildType, Weather } from './types/index.ts'
-import { nurseryItems, kindergartenItems } from './data/items.ts'
+import { nurseryItems, kindergartenItems, getAgeSpecificItems } from './data/items.ts'
 import { getDayOfWeek } from './utils/storage.ts'
 import { useAppData } from './hooks/useAppData.ts'
 import { useWeatherForecast } from './hooks/useWeatherForecast.ts'
@@ -13,6 +13,7 @@ import { EventManager } from './components/EventManager.tsx'
 import { CustomItemManager } from './components/CustomItemManager.tsx'
 import { WeatherForecastCard } from './components/WeatherForecastCard.tsx'
 import { AiAssistantCard } from './components/AiAssistantCard.tsx'
+import { ProfileManager } from './components/ProfileManager.tsx'
 
 const COLORS = {
   nursery: '#FF8B94',
@@ -34,9 +35,23 @@ function App() {
     addEvent,
     removeEvent,
     getTodayEvents,
+    addProfile,
+    updateProfile,
+    removeProfile,
+    setActiveProfile,
+    getActiveProfile,
   } = useAppData()
 
   const { forecast, status: weatherStatus, error: weatherError, retry: weatherRetry } = useWeatherForecast()
+
+  const activeProfile = getActiveProfile()
+
+  // プロフィールがある場合、そのtypeに自動切替
+  useEffect(() => {
+    if (activeProfile) {
+      setActiveChild(activeProfile.type)
+    }
+  }, [activeProfile])
 
   const accentColor = COLORS[activeChild]
   const checks = getChecks(activeChild)
@@ -54,6 +69,16 @@ function App() {
       if (item.dayOfWeek && item.dayOfWeek.includes(dayOfWeek as 0|1|2|3|4|5|6)) return true
       return false
     })
+
+    // 年齢別アイテムを追加
+    const ageItems = activeProfile
+      ? getAgeSpecificItems(activeProfile.age, activeChild).filter(item => {
+          if (item.everyday) return true
+          if (item.weather && item.weather.includes(weather)) return true
+          if (item.dayOfWeek && item.dayOfWeek.includes(dayOfWeek as 0|1|2|3|4|5|6)) return true
+          return false
+        })
+      : []
 
     // カスタム持ち物を追加
     const customMapped = customItems.map(ci => ({
@@ -73,10 +98,11 @@ function App() {
 
     return [
       ...items.map(i => ({ id: i.id, name: i.name, emoji: i.emoji })),
+      ...ageItems.map(i => ({ id: i.id, name: i.name, emoji: i.emoji })),
       ...customMapped,
       ...eventMapped,
     ]
-  }, [baseItems, weather, dayOfWeek, customItems, todayEvents])
+  }, [baseItems, weather, dayOfWeek, customItems, todayEvents, activeProfile, activeChild])
 
   const checkedCount = todayItems.filter(item => checks[item.id]).length
   const totalCount = todayItems.length
@@ -99,6 +125,11 @@ function App() {
   const today = new Date()
   const dateStr = `${today.getMonth() + 1}/${today.getDate()}（${dayNames[today.getDay()]}）`
 
+  // ヘッダーのタイトル
+  const headerTitle = activeProfile
+    ? `${activeProfile.name}ちゃんの もちものチェック`
+    : '🎒 もちものチェック'
+
   return (
     <div className="min-h-screen pb-8" style={{ backgroundColor: '#FFF5F5' }}>
       <CompletionCelebration show={showCelebration} />
@@ -106,12 +137,30 @@ function App() {
       <div className="max-w-[480px] mx-auto px-4 pt-4">
         {/* ヘッダー */}
         <div className="text-center mb-4">
-          <h1 className="text-xl font-bold text-gray-700">🎒 もちものチェック</h1>
-          <p className="text-sm text-gray-400 mt-1">{dateStr}</p>
+          <h1 className="text-xl font-bold text-gray-700">
+            {activeProfile ? `🎒 ${headerTitle}` : headerTitle}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {dateStr}
+            {activeProfile?.gardenName && ` ・ ${activeProfile.gardenName}`}
+          </p>
         </div>
 
-        {/* タブ切り替え */}
-        <TabSwitcher active={activeChild} onChange={setActiveChild} />
+        {/* プロフィール管理 */}
+        <ProfileManager
+          profiles={data.profiles}
+          activeProfileId={data.activeProfileId}
+          onAdd={addProfile}
+          onUpdate={updateProfile}
+          onRemove={removeProfile}
+          onSelect={setActiveProfile}
+          accentColor={accentColor}
+        />
+
+        {/* タブ切り替え（プロフィール未登録時のみ表示） */}
+        {!activeProfile && (
+          <TabSwitcher active={activeChild} onChange={setActiveChild} />
+        )}
 
         {/* 天気予報・服装アドバイス */}
         <WeatherForecastCard
@@ -127,6 +176,7 @@ function App() {
           forecast={forecast}
           childType={activeChild}
           todayEvents={todayEvents}
+          profile={activeProfile}
           accentColor={accentColor}
         />
 
@@ -142,7 +192,7 @@ function App() {
           checks={checks}
           onToggle={handleToggle}
           accentColor={accentColor}
-          title="📋 今日の持ち物"
+          title={activeProfile ? `📋 ${activeProfile.name}ちゃんの持ち物` : '📋 今日の持ち物'}
         />
 
         {/* カスタム持ち物 */}

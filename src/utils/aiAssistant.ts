@@ -1,5 +1,5 @@
 import type { WeatherForecast } from '../hooks/useWeatherForecast'
-import type { ChildType, EventItem } from '../types/index.ts'
+import type { ChildType, ChildProfile, EventItem } from '../types/index.ts'
 
 export interface AiSuggestion {
   emoji: string
@@ -11,12 +11,59 @@ export function generateSuggestions(
   forecast: WeatherForecast | null,
   childType: ChildType,
   todayEvents: EventItem[],
+  profile?: ChildProfile | null,
 ): AiSuggestion[] {
   const suggestions: AiSuggestion[] = []
   const now = new Date()
   const month = now.getMonth() + 1
   const hour = now.getHours()
   const dayOfWeek = now.getDay()
+
+  // --- プロフィールベースの提案 ---
+  if (profile) {
+    const { age, allergies, name } = profile
+
+    // 年齢別アドバイス
+    if (age <= 1) {
+      suggestions.push({
+        emoji: '🍼',
+        message: `${name}ちゃんはまだ小さいので、替えの服は2〜3組あると安心です`,
+        priority: 'medium',
+      })
+    } else if (age === 2) {
+      suggestions.push({
+        emoji: '🩲',
+        message: `${name}ちゃんのトイトレ中は着替えを多めに！パンツも2〜3枚予備を`,
+        priority: 'medium',
+      })
+    } else if (age >= 5) {
+      suggestions.push({
+        emoji: '✏️',
+        message: `${name}ちゃんはもうすぐ小学生！えんぴつの持ち方の練習グッズもいいですね`,
+        priority: 'low',
+      })
+    }
+
+    // アレルギー注意
+    if (allergies.length > 0) {
+      suggestions.push({
+        emoji: '⚠️',
+        message: `${name}ちゃんのアレルギー（${allergies.join('・')}）の薬や対策は大丈夫ですか？`,
+        priority: 'high',
+      })
+    }
+
+    // お弁当の日のアレルギー注意
+    if (allergies.length > 0 && (dayOfWeek >= 1 && dayOfWeek <= 5)) {
+      if (childType === 'kindergarten') {
+        suggestions.push({
+          emoji: '🍱',
+          message: `お弁当にアレルギー食材（${allergies.join('・')}）が入っていないか確認を`,
+          priority: 'high',
+        })
+      }
+    }
+  }
 
   // --- 天気ベースの提案 ---
   if (forecast) {

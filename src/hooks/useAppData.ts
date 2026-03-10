@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { AppData, ChildType, CheckState, CustomItem, EventItem } from '../types/index.ts'
+import type { AppData, ChildType, CheckState, CustomItem, EventItem, ChildProfile } from '../types/index.ts'
 import { loadData, saveData, getToday } from '../utils/storage.ts'
 
 export function useAppData() {
@@ -92,6 +92,43 @@ export function useAppData() {
     return data.events.filter(e => e.date === today)
   }, [data.events])
 
+  const addProfile = useCallback((profile: Omit<ChildProfile, 'id'>) => {
+    const newProfile: ChildProfile = { ...profile, id: `profile-${Date.now()}` }
+    setData(prev => ({
+      ...prev,
+      profiles: [...prev.profiles, newProfile],
+      activeProfileId: prev.activeProfileId ?? newProfile.id,
+    }))
+  }, [])
+
+  const updateProfile = useCallback((profileId: string, updates: Partial<Omit<ChildProfile, 'id'>>) => {
+    setData(prev => ({
+      ...prev,
+      profiles: prev.profiles.map(p => p.id === profileId ? { ...p, ...updates } : p),
+    }))
+  }, [])
+
+  const removeProfile = useCallback((profileId: string) => {
+    setData(prev => {
+      const newProfiles = prev.profiles.filter(p => p.id !== profileId)
+      return {
+        ...prev,
+        profiles: newProfiles,
+        activeProfileId: prev.activeProfileId === profileId
+          ? (newProfiles[0]?.id ?? null)
+          : prev.activeProfileId,
+      }
+    })
+  }, [])
+
+  const setActiveProfile = useCallback((profileId: string) => {
+    setData(prev => ({ ...prev, activeProfileId: profileId }))
+  }, [])
+
+  const getActiveProfile = useCallback((): ChildProfile | null => {
+    return data.profiles.find(p => p.id === data.activeProfileId) ?? null
+  }, [data.profiles, data.activeProfileId])
+
   return {
     data,
     toggleCheck,
@@ -102,5 +139,10 @@ export function useAppData() {
     addEvent,
     removeEvent,
     getTodayEvents,
+    addProfile,
+    updateProfile,
+    removeProfile,
+    setActiveProfile,
+    getActiveProfile,
   }
 }

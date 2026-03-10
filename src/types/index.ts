@@ -30,6 +30,16 @@ export interface CustomItem {
   emoji: string
 }
 
+export interface ChildProfile {
+  id: string
+  name: string
+  age: number // 年齢
+  type: ChildType // 保育園 or 幼稚園
+  gardenName: string // 園の名前
+  allergies: string[] // アレルギー
+  notes: string // メモ
+}
+
 export interface AppData {
   nurseryChecks: CheckState
   kindergartenChecks: CheckState
@@ -37,4 +47,6 @@ export interface AppData {
   kindergartenCustomItems: CustomItem[]
   events: EventItem[]
   lastDate: string
+  profiles: ChildProfile[]
+  activeProfileId: string | null
 }
