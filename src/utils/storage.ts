@@ -9,6 +9,8 @@ const defaultData: AppData = {
   kindergartenCustomItems: [],
   events: [],
   lastDate: new Date().toISOString().split('T')[0],
+  profiles: [],
+  activeProfileId: null,
 }
 
 export function loadData(): AppData {

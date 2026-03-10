@@ -9,10 +9,10 @@ interface Props {
 
 const weathers: Weather[] = ['sunny', 'cloudy', 'rainy', 'hot', 'cold']
 
-export function WeatherSelector({ selected, onChange, accentColor }: Props) {
+export function WeatherSelector({ selected, onChange }: Props) {
   return (
-    <div className="bg-white rounded-2xl p-3 mb-4 shadow-sm">
-      <p className="text-sm text-gray-500 mb-2 font-medium">今日の天気</p>
+    <div className="card p-3 mb-4">
+      <p className="section-label mb-2">weather</p>
       <div className="flex gap-1.5">
         {weathers.map(w => {
           const { emoji, label } = weatherLabels[w]
@@ -21,14 +21,13 @@ export function WeatherSelector({ selected, onChange, accentColor }: Props) {
             <button
               key={w}
               onClick={() => onChange(w)}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex-1 py-2 rounded-xl text-xs transition-all ${
                 isActive
-                  ? `text-white shadow-md scale-105`
-                  : 'bg-gray-50 text-gray-600'
+                  ? 'bg-[#7c6d8e] text-white font-medium'
+                  : 'bg-[#faf8f5] text-[#8a8583]'
               }`}
-              style={isActive ? { backgroundColor: accentColor } : undefined}
             >
-              <span className="block text-lg">{emoji}</span>
+              <span className="block text-base">{emoji}</span>
               {label}
             </button>
           )
