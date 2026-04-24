@@ -14,6 +14,7 @@ import { CustomItemManager } from './components/CustomItemManager.tsx'
 import { WeatherForecastCard } from './components/WeatherForecastCard.tsx'
 import { AiAssistantCard } from './components/AiAssistantCard.tsx'
 import { ProfileManager } from './components/ProfileManager.tsx'
+import { DailyNoteShare } from './components/DailyNoteShare.tsx'
 
 const ACCENT = '#7c6d8e'
 
@@ -179,6 +180,16 @@ function App() {
           onToggle={handleToggle}
           accentColor={ACCENT}
           title={activeProfile ? `${activeProfile.name}の持ち物` : '今日の持ち物'}
+        />
+
+        {/* ノート自動生成・シェア */}
+        <DailyNoteShare
+          profile={activeProfile}
+          weather={weather}
+          items={todayItems}
+          checks={checks}
+          events={todayEvents}
+          accentColor={ACCENT}
         />
 
         {/* カスタム持ち物 */}
