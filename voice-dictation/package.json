@@ -1,0 +1,16 @@
+{
+  "name": "voice-dictation",
+  "version": "0.1.0",
+  "description": "Typeless風 音声入力ツール: 音声→文字起こし→Claude整形→どのアプリにも貼り付け (macOS常駐)",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

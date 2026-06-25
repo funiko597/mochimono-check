@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>recorder</title>
+  </head>
+  <body>
+    <!-- 不可視のレンダラ。メインプロセスからの指示でマイク録音を行う。 -->
+    <script>
+      const { ipcRenderer } = require('electron');
+
+      let mediaRecorder = null;
+      let chunks = [];
+      let stream = null;
+
+      ipcRenderer.on('start-recording', async () => {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          chunks = [];
+          mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) chunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = async () => {
+            try {
+              const blob = new Blob(chunks, { type: 'audio/webm' });
+              const buf = await blob.arrayBuffer();
+              ipcRenderer.send('audio-data', buf);
+            } catch (err) {
+              ipcRenderer.send('recording-error', String(err));
+            } finally {
+              if (stream) {
+                stream.getTracks().forEach((t) => t.stop());
+                stream = null;
+              }
+            }
+          };
+
+          mediaRecorder.start();
+          ipcRenderer.send('recording-started');
+        } catch (err) {
+          ipcRenderer.send('recording-error', String(err));
+        }
+      });
+
+      ipcRenderer.on('stop-recording', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+      });
+    </script>
+  </body>
+</html>
